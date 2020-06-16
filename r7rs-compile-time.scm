@@ -11,8 +11,6 @@
   (let* ((name2 (parse-library-name name loc))
 	 (sname2 (symbol->string name2)))
     (or (##sys#find-module name2 #f)
-	(memq name2 ##sys#core-library-modules)
-	(memq name2 ##sys#core-syntax-modules)
 	(file-exists? (string-append sname2 ".import.so"))
 	(file-exists? (string-append sname2 ".import.scm")))))
 
