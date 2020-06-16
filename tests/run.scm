@@ -52,7 +52,53 @@
           (with-output-to-string
            (lambda () (include-ci "include-ci.scm"))))))
 
-#+full-numeric-tower
+(test-group "4.2.1: Conditionals"
+  (test-group "cond-expand"
+    (test "(scheme base)"
+          'scheme-base
+          (cond-expand
+           ((library (scheme base)) 'scheme-base)
+           (else #f)))
+    (test "(chicken base)"
+          'chicken-base
+          (cond-expand
+           ((library (chicken base)) 'chicken-base)
+           (else #f)))
+    (test "chicken.base"
+          'chicken.base
+          (cond-expand
+           ((library chicken.base) 'chicken.base)
+           (else #f)))
+    (test "(r7rs)"
+          'r7rs
+          (cond-expand
+           ((library (r7rs)) 'r7rs)
+           (else #f)))
+    (test "r7rs"
+          'r7rs
+          (cond-expand
+           ((library r7rs) 'r7rs)
+           (else #f)))
+    (test "(srfi 1)"
+          'srfi-1
+          (let ()
+            (import (srfi 1))
+            (cond-expand
+             ((library (srfi 1)) 'srfi-1)
+             (else #f))))
+    (test "srfi-1"
+          'srfi-1
+          (let ()
+            (import srfi-1)
+            (cond-expand
+             ((library srfi-1) 'srfi-1)
+             (else #f))))
+    (test "(bogus identifier)"
+          #f
+          (cond-expand
+           ((library (bogus identifier)) 'bogus-identifier)
+           (else #f)))))
+
 (test-group "6.2.6: numerical operations"
   (test-group "floor/...truncate-remainder"
     (test '(2 1)      (receive (floor/ 5 2)))
