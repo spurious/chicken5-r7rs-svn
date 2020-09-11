@@ -17,7 +17,12 @@
     (let ((name (gensym "environment-module-")))
       (define (delmod)
 	(and-let* ((modp (assq name ##sys#module-table)))
-	  (set! ##sys#module-table (##sys#delq modp ##sys#module-table))))
+	  (set! ##sys#module-table (delq modp ##sys#module-table))))
+      (define (delq x lst)
+        (let loop ([lst lst])
+          (cond ((null? lst) lst)
+	        ((eq? x (##sys#slot lst 0)) (##sys#slot lst 1))
+	        (else (cons (##sys#slot lst 0) (loop (##sys#slot lst 1)))) ) ) )
       (dynamic-wind
        void
        (lambda ()
