@@ -7,6 +7,9 @@
 ;;; 6.12. Environments and evaluation
 ;;;
 
+  ;; the slot holding "saved-environments" in the "module" record
+  (define module-saved-environments-slot 14)
+
   (: eval (* (struct environment) -> *))
 
   (define (eval expr env) (%eval expr env))
@@ -17,7 +20,12 @@
     (let ((name (gensym "environment-module-")))
       (define (delmod)
 	(and-let* ((modp (assq name ##sys#module-table)))
-	  (set! ##sys#module-table (##sys#delq modp ##sys#module-table))))
+	  (set! ##sys#module-table (delq modp ##sys#module-table))))
+      (define (delq x lst)
+        (let loop ([lst lst])
+          (cond ((null? lst) lst)
+	        ((eq? x (##sys#slot lst 0)) (##sys#slot lst 1))
+	        (else (cons (##sys#slot lst 0) (loop (##sys#slot lst 1)))) ) ) )
       (dynamic-wind
        void
        (lambda ()
@@ -30,7 +38,7 @@
 	 (let ((mod (##sys#find-module name)))
 	   (##sys#make-structure 'environment
 	    (cons 'import specs)
-	    (let ((env (##sys#slot mod 13)))
+	    (let ((env (##sys#slot mod module-saved-environments-slot)))
 	      (append (car env) (cdr env))) ; combine env and syntax bindings
 	    #t)))
        ;; ...and remove it right away

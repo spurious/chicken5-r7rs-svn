@@ -1049,6 +1049,10 @@
           (close-output-port p)
           (get-output-bytevector p))))
 
+;; this was submitted as broken by Lukas Bröger:
+(test-group "eval environments"
+  (test 42 (eval '42 (scheme-report-environment 5))))
+
 (test-end "r7rs tests")
 
 (test-exit)
