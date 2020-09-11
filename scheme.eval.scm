@@ -7,6 +7,9 @@
 ;;; 6.12. Environments and evaluation
 ;;;
 
+  ;; the slot holding "saved-environments" in the "module" record
+  (define module-saved-environments-slot 14)
+
   (: eval (* (struct environment) -> *))
 
   (define (eval expr env) (%eval expr env))
@@ -35,7 +38,7 @@
 	 (let ((mod (##sys#find-module name)))
 	   (##sys#make-structure 'environment
 	    (cons 'import specs)
-	    (let ((env (##sys#slot mod 13)))
+	    (let ((env (##sys#slot mod module-saved-environments-slot)))
 	      (append (car env) (cdr env))) ; combine env and syntax bindings
 	    #t)))
        ;; ...and remove it right away
